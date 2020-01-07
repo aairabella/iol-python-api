@@ -1,32 +1,39 @@
 import requests
 import json
 
-class token(user_data):
+class Token:
 
-    def get_token(user_data):
+    def __init__(self, file_data):
+
         # API Parameters
-        URL = 'https://api.invertironline.com/token'
-        Host = 'api.invertironline.com'
-        ContentType = 'application/x-www-form-urlencoded'
-        granttype = 'password'
+        self.URL = 'https://api.invertironline.com/token'
+        self.Host = 'api.invertironline.com'
+        self.ContentType = 'application/x-www-form-urlencoded'
+        self.granttype = 'password'
+
+        self.file_data = file_data
+
+
+        with open(self.file_data) as json_file:
+            self.user_data = json.load(json_file)
+        
+        
+        self.data = {
+            'Host': self.Host,
+            'username': self.user_data[0]['username'],
+            'password': self.user_data[0]['password'],
+            'grant_type': self.granttype
+        }
+        
+        self.headers = {'Content-Type': self.ContentType}
+        
+    def get_token(self):
+
         
         # Parametros de usuario. Generar un archivo JSON utilizando el ejemplo user_data.json
         # con el nombre de usuario y la contraseña del la cuenta IOL
         
-        with open('user_data.json') as json_file:
-            user_data = json.load(json_file)
-        
-        
-        data = {
-            'Host': Host,
-            'username': user_data[0]['username'],
-            'password': user_data[0]['password'],
-            'grant_type': granttype
-        }
-        
-        headers = {'Content-Type': ContentType}
-        
-        r = requests.post(url=URL, data=data, headers=headers)
+        r = requests.post(url=self.URL, data=self.data, headers=self.headers)
         
         data = r.json()
         
